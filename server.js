@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const dealRoutes = require('./routes/deals');
+const surveyRoute = require('./routes/sendSurvey');
 require('dotenv').config();
 
 const app = express();
@@ -20,5 +21,6 @@ mongoose.connect(MONGO_URI, {
 
 app.use(express.json());
 app.use('/api', dealRoutes);
+app.use('/api', surveyRoute)
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
