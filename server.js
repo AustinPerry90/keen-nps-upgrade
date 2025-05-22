@@ -1,5 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const cron = require('node-cron');
+const axios = require('axios');
 const dealRoutes = require('./routes/deals');
 const surveyRoute = require('./routes/sendSurvey');
 require('dotenv').config();
@@ -22,5 +24,16 @@ mongoose.connect(MONGO_URI, {
 app.use(express.json());
 app.use('/api', dealRoutes);
 app.use('/api', surveyRoute)
+
+cron.schedule('25 10 * * *', async () => {
+  try {
+    console.log('Running scheduled fetch-and-save-deals job...');
+    const response = await axios.get(`http://localhost:${PORT}/api/fetch-and-save-deals`);
+    console.log('Scheduled API call successful:', response.data);
+  } catch (error) {
+    console.error('Scheduled API call failed:', error.message);
+  }
+});
+
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

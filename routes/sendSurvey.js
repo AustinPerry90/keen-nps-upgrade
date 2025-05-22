@@ -21,7 +21,7 @@ router.post('/send-email', async (req, res) => {
                 toRecipients: [
                     {
                         emailAddress: {
-                            address: 'austin.jonnyq@gmail.com'
+                            address: 'austin.perry@ed.cna.nl.ca'
                         }
                     }
                 ]
