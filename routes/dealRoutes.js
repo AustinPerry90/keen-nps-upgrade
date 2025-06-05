@@ -3,6 +3,7 @@ const router = express.Router();
 const axios = require('axios');
 const Deal = require('../models/Deal');
 
+//Fetch deals from PipeDrive API and save them to MongoDB. 
 router.get('/fetch-and-save-deals', async (req, res) => {
   try {
     console.log('Fetching deals from API...');
@@ -34,9 +35,22 @@ router.get('/fetch-and-save-deals', async (req, res) => {
       }
 
       let timeSinceSurvey = null;
+      const stageID = deal.stage_id;
 
-      if (timeAsClient !== null && timeAsClient >= 90) {
-        timeSinceSurvey = (timeAsClient % 180 === 0) ? 1 : 0;
+      if (typeof timeAsClient === 'number') {
+        if (stageID === 9) {
+          if (timeAsClient < 90) {
+            timeSinceSurvey = timeAsClient;
+          } else {
+            timeSinceSurvey = (timeAsClient - 90) % 180;
+          }
+        } else if (stageID === 24) {
+          if (timeAsClient < 183) {
+            timeSinceSurvey = timeAsClient;
+          } else {
+            timeSinceSurvey = (timeAsClient - 183) % 365;
+          }
+        }
       }
 
       return {
@@ -49,6 +63,7 @@ router.get('/fetch-and-save-deals', async (req, res) => {
         time_since_survey: timeSinceSurvey
       };
     });
+
 
     console.log('Formatted deals:', formattedDeals);
 
@@ -73,5 +88,29 @@ router.get('/fetch-and-save-deals', async (req, res) => {
     res.status(500).json({ error: 'Internal server error', message: error.message });
   }
 });
+
+//Get the client name from MongoDB using dealID
+router.get('/client-info', async (req, res) => {
+  try {
+    const dealID = parseInt(req.query.dealID); // Make sure it's a number
+    if (isNaN(dealID)) {
+      return res.status(400).json({ error: 'Invalid dealID' });
+    }
+
+    const deal = await Deal.findOne({ deal_id: dealID });
+
+    if (!deal) {
+      return res.status(404).json({ error: 'Deal not found' });
+    }
+
+    return res.json({
+      name: deal.organization_name || 'Unknown Company'
+    });
+  } catch (error) {
+    console.error('Error fetching deal info:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 module.exports = router;

@@ -1,21 +1,26 @@
 {
   "dependencies": {
     "axios": "^1.9.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.5.0",
     "express": "^5.1.0",
     "mongoose": "^8.14.1",
-    "node-cron": "^4.0.6"
+    "node-cron": "^4.0.6",
+    "react-router-dom": "^7.6.2"
   },
   "name": "keen-nps-upgrade",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "devDependencies": {
+    "concurrently": "^9.1.2",
     "nodemon": "^3.1.10"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js"
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "nodemon server.js",
+    "client": "cd client && npm start"
   },
   "repository": {
     "type": "git",

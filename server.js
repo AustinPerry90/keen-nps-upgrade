@@ -2,14 +2,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cron = require('node-cron');
 const axios = require('axios');
-const dealRoutes = require('./routes/deals');
+const dealRoutes = require('./routes/dealRoutes');
 const surveyRoute = require('./routes/sendSurvey');
+const surveyRoutes = require('./routes/survey');
+const cors = require('cors');
 require('dotenv').config();
 
 const app = express();
 
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGODB_URI;
+
+app.use(cors());
 
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
@@ -24,8 +28,9 @@ mongoose.connect(MONGO_URI, {
 app.use(express.json());
 app.use('/api', dealRoutes);
 app.use('/api', surveyRoute)
+app.use('/api', surveyRoutes);
 
-cron.schedule('25 10 * * *', async () => {
+cron.schedule('27 10 * * *', async () => {
   try {
     console.log('Running scheduled fetch-and-save-deals job...');
     const response = await axios.get(`http://localhost:${PORT}/api/fetch-and-save-deals`);
