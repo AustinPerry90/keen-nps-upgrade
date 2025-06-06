@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const SurveyResponseSchema = new mongoose.Schema({
+const SurveySchema = new mongoose.Schema({
   clientName: { type: String, required: true },
   rating: { type: Number, required: true, min: 1, max: 10 },
   comment: { type: String, maxlength: 500 },
@@ -8,4 +8,4 @@ const SurveyResponseSchema = new mongoose.Schema({
   submittedAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('SurveyResponse', SurveyResponseSchema);
+module.exports = mongoose.model('Survey', SurveySchema);
