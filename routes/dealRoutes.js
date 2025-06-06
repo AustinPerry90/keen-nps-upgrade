@@ -112,5 +112,31 @@ router.get('/client-info', async (req, res) => {
   }
 });
 
+// Get number of deals
+router.get('/numDeals', async (req, res) => {
+  try {
+    const deals = await Deal.find();
+    res.status(200).json({
+      total: deals.length,
+      deals: deals
+    });
+  } catch (error) {
+    console.error('Error retrieving deals:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+// GET /api/deals fetch all deal information from MongoDB
+router.get('/deals', async (req, res) => {
+  try {
+    const deals = await Deal.find({}).lean();
+    res.json({ deals });
+  } catch (err) {
+    console.error('Error fetching deals:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 module.exports = router;

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const SurveyResponse = require('../models/SurveyResponse');
+const SurveyResponse = require('../models/Survey');
 
 // POST /api/submit-survey
 router.post('/submit-survey', async (req, res) => {
@@ -20,5 +20,35 @@ router.post('/submit-survey', async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 });
+
+// GET /api/surveys/:dealID
+router.get('/surveys/:dealID', async (req, res) => {
+  const { dealID } = req.params;
+
+  try {
+    const surveys = await SurveyResponse.find({ dealID });
+
+    if (!surveys.length) {
+      return res.status(404).json({ message: 'No surveys found for this deal' });
+    }
+
+    res.status(200).json(surveys);
+  } catch (err) {
+    console.error('Error fetching surveys:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// GET /api/surveys - Get all surveys
+router.get('/surveys', async (req, res) => {
+  try {
+    const surveys = await SurveyResponse.find();
+    res.status(200).json(surveys);
+  } catch (err) {
+    console.error('Error fetching all surveys:', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 
 module.exports = router;

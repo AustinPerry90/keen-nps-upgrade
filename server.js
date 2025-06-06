@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const cron = require('node-cron');
 const axios = require('axios');
 const dealRoutes = require('./routes/dealRoutes');
-const surveyRoute = require('./routes/sendSurvey');
+const surveyRoute = require('./routes/sendEmail');
 const surveyRoutes = require('./routes/survey');
 const cors = require('cors');
 require('dotenv').config();
