@@ -3,16 +3,16 @@ import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
 const SurveyPage = () => {
-  const { dealID } = useParams();  // Get dealID from URL param
+  const { dealID } = useParams();
   const [clientName, setClientName] = useState('');
   const [rating, setRating] = useState(null);
   const [comment, setComment] = useState('');
+  const [extraFeedback, setExtraFeedback] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!dealID) return;
 
-    // Fetch client info by deal ID
     axios.get(`/api/client-info?dealID=${dealID}`)
       .then(res => {
         setClientName(res.data.name);
@@ -34,6 +34,7 @@ const SurveyPage = () => {
         clientName,
         rating,
         comment,
+        extraFeedback,
         dealID
       });
 
@@ -47,56 +48,157 @@ const SurveyPage = () => {
   };
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <h2>Client Survey</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label><strong>Client Name:</strong></label>
-          <p>{clientName || 'Loading...'}</p>
-        </div>
-
-        <div>
-          <label><strong>Rating (1 to 10):</strong></label>
-          <div>
-            {[...Array(10)].map((_, i) => (
-              <label key={i + 1} style={{ marginRight: '10px' }}>
-                <input
-                  type="radio"
-                  value={i + 1}
-                  checked={rating === i + 1}
-                  onChange={() => setRating(i + 1)}
-                  required
-                />
-                {i + 1}
-              </label>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <label><strong>Additional Comment:</strong></label><br />
-          <textarea
-            maxLength="500"
-            rows="4"
-            cols="50"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder="Your feedback..."
-            required
+    <div style={{
+      height: '100vh',
+      overflow: 'hidden',
+      background: '#000',
+      backgroundImage: 'url("/images/blobby.svg")',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontFamily: 'sans-serif',
+      padding: '20px'
+    }}>
+      <div style={{
+        display: 'flex',
+        gap: '20px',
+        maxWidth: '1100px',
+        width: '100%',
+        height: '90vh',
+      }}>
+        {/* LEFT PANEL */}
+        <div style={{
+          flex: 1,
+          backgroundColor: '#1a1a1a',
+          color: '#fff',
+          padding: '30px',
+          borderRadius: '12px',
+          border: '1px solid #888',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+          overflowY: 'auto',
+        }}>
+          <img
+            src="/images/logo192.png"
+            alt="Check-in Graphic"
+            style={{ maxWidth: '100%', height: 'auto', marginBottom: '20px' }}
           />
-          <div style={{ fontSize: '0.8em', color: '#666' }}>
-            {comment.length}/500 characters
-          </div>
+          <h1>Just Checking In</h1>
+          <p style={{ fontSize: '1.1em', maxWidth: '300px' }}>
+            Let us know how we're doing — your feedback helps us improve!
+          </p>
         </div>
 
-        {/* Hidden dealID field */}
-        <input type="hidden" value={dealID || ''} name="dealID" />
+        {/* RIGHT PANEL (SURVEY) */}
+        <div style={{
+          flex: 1,
+          backgroundColor: '#1a1a1a',
+          color: '#fff',
+          padding: '30px',
+          borderRadius: '12px',
+          border: '1px solid #888',
+          boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+          overflowY: 'auto',
+        }}>
 
-        <button type="submit" disabled={submitting}>
-          {submitting ? 'Submitting...' : 'Submit Survey'}
-        </button>
-      </form>
+          <form onSubmit={handleSubmit}>
+            <div style={{ marginBottom: '15px' }}>
+              <label><strong>Client Name:</strong></label>
+              <p>{clientName || 'Loading...'}</p>
+            </div>
+
+            <div style={{ marginBottom: '15px' }}>
+              <label><strong>On a scale of 1-10, how satisfied are you with the services provided by Keen?</strong></label>
+              <div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '10px' }}>
+                  {[...Array(10)].map((_, i) => {
+                    const value = i + 1;
+                    const isSelected = rating === value;
+
+                    return (
+                      <label
+                        key={value}
+                        style={{
+                          cursor: 'pointer',
+                          padding: '6px 10px',
+                          borderRadius: '4px',
+                          border: `1px solid ${isSelected ? '#3b82f6' : '#555'}`,
+                          backgroundColor: isSelected ? '#3b82f6' : '#1a1a1a',
+                          color: isSelected ? '#fff' : '#ccc',
+                          fontWeight: 'bold',
+                          transition: 'all 0.2s ease',
+                          userSelect: 'none'
+                        }}
+                      >
+                        <input
+                          type="radio"
+                          name="rating"
+                          value={value}
+                          checked={isSelected}
+                          onChange={() => setRating(value)}
+                          style={{ display: 'none' }}
+                        />
+                        {value}
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '15px' }}>
+              <label><strong>We always appreciate your feedback! Let us know what you think about our services.</strong></label><br />
+              <textarea
+                maxLength="500"
+                rows="4"
+                cols="50"
+                value={comment}
+                onChange={(e) => setComment(e.target.value)}
+                placeholder="Your feedback..."
+                style={{ width: '100%', marginTop: '5px' }}
+              />
+              <div style={{ fontSize: '0.8em', color: '#ccc' }}>
+                {comment.length}/500 characters
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '15px' }}>
+              <label><strong>
+                We pride ourselves on bringing value to our clients. What aspect of our service has served your organization the best?<br />
+                Your insights are immensely valuable and may be used for marketing purposes on our website and other promotional materials.
+              </strong></label><br />
+              <textarea
+                rows="3"
+                cols="50"
+                value={extraFeedback}
+                onChange={(e) => setExtraFeedback(e.target.value)}
+                placeholder="Anything else you'd like to share?"
+                style={{ width: '100%', marginTop: '5px' }}
+              />
+            </div>
+
+            <input type="hidden" value={dealID || ''} name="dealID" />
+
+            <button
+              type="submit"
+              disabled={submitting}
+              style={{
+                marginTop: '20px',
+                padding: '10px 20px',
+                backgroundColor: '#3b82f6',
+                color: '#fff',
+                border: 'none',
+                borderRadius: '6px',
+                cursor: 'pointer'
+              }}
+            >
+              {submitting ? 'Submitting...' : 'Submit Survey'}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

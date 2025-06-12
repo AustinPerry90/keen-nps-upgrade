@@ -162,6 +162,7 @@ const Home = () => {
                   <td className="py-2">{survey.clientName}</td>
                   <td className="py-2">{survey.rating}</td>
                   <td className="py-2 italic">{survey.comment || 'No comment'}</td>
+                  <td className="py-2">{formatDate(survey.submittedAt)}</td>
                 </tr>
               ))}
             </tbody>
