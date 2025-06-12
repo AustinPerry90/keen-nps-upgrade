@@ -92,6 +92,7 @@ const Clients = () => {
             {/* Client Details Section */}
             <div className="mb-8 space-y-2">
               <p><strong>Email:</strong> {selectedClient.person_email || 'N/A'}</p>
+              <p><strong>Phone:</strong> {selectedClient.phone_number || 'N/A'}</p>
               <p>
                 <strong>Last Survey Date:</strong>{' '}
                 {latestSurvey ? formatDate(latestSurvey.submittedAt) : 'No surveys yet'}

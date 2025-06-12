@@ -60,7 +60,8 @@ router.get('/fetch-and-save-deals', async (req, res) => {
         person_email: deal.person_id?.email?.find(e => e.primary)?.value || '',
         organization_name: deal.org_id?.name || '',
         time_as_client: timeAsClient,
-        time_since_survey: timeSinceSurvey
+        time_since_survey: timeSinceSurvey,
+        phone_number: deal.person_id?.phone.find(e => e.primary)?.value || ''
       };
     });
 
