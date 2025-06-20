@@ -8,7 +8,12 @@ const dealSchema = new mongoose.Schema({
   organization_name: String,
   time_as_client: Number,
   time_since_survey: Number,
-  phone_number: String
+  phone_number: String,
+  technician: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team',
+    default: null
+  },
 });
 
 module.exports = mongoose.model('Deal', dealSchema);

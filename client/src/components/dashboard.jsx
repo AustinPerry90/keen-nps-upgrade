@@ -29,6 +29,12 @@ const Dashboard = () => {
         >
           Clients
         </Link>
+        <Link 
+          to="/dashboard/team"
+          style={{ color: location.pathname === '/dashboard/team' ? '#1abc9c' : '#ecf0f1', textDecoration: 'none' }}
+        >
+          Team
+        </Link>
       </div>
 
       {/* Main content */}
