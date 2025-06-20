@@ -6,4 +6,4 @@ const TeamSchema = new mongoose.Schema({
   phone: { type: String }
 });
 
-module.exports = mongoose.model('TeamMember', TeamSchema);
+module.exports = mongoose.model('Team', TeamSchema);

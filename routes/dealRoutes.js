@@ -164,7 +164,7 @@ router.patch('/deals/:dealID/assign-technician', async (req, res) => {
     await deal.save();
 
     // Populate technician info before returning
-    await deal.populate('technician').execPopulate();
+    await deal.populate('technician');
 
     res.json(deal);
   } catch (error) {
