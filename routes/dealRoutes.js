@@ -140,4 +140,38 @@ router.get('/deals', async (req, res) => {
   }
 });
 
+// PATCH /api/deals/:dealID/assign-technician
+router.patch('/deals/:dealID/assign-technician', async (req, res) => {
+  try {
+    const dealID = parseInt(req.params.dealID);
+    const { technicianId } = req.body;
+
+    if (isNaN(dealID)) {
+      return res.status(400).json({ error: 'Invalid deal ID' });
+    }
+    if (!technicianId) {
+      return res.status(400).json({ error: 'Technician ID is required' });
+    }
+
+    // Find deal by deal_id (not _id)
+    const deal = await Deal.findOne({ deal_id: dealID });
+
+    if (!deal) {
+      return res.status(404).json({ error: 'Deal not found' });
+    }
+
+    deal.technician = technicianId;
+    await deal.save();
+
+    // Populate technician info before returning
+    await deal.populate('technician').execPopulate();
+
+    res.json(deal);
+  } catch (error) {
+    console.error('Error assigning technician:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 module.exports = router;

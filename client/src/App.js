@@ -1,9 +1,11 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import SurveyPage from './components/survey';
+import Survey2 from './components/survey2';
 import Dashboard from './components/dashboard';
 import Home from './pages/home';
 import Clients from './pages/clients';
+import Team from './pages/team';
 
 function App() {
   console.log('App rendered');
@@ -12,12 +14,14 @@ function App() {
       <Routes>
         {/* Survey Route */}
         <Route path="/survey/:dealID" element={<SurveyPage />} />
+        <Route path="/survey2/:dealID" element={<Survey2 />} />
 
         {/* Dashboard Route*/}
         <Route path="/dashboard" element={<Dashboard />}>
           <Route index element={<Navigate to="home" replace />} />
           <Route path="home" element={<Home />} />
           <Route path="clients" element={<Clients />} />
+          <Route path="team" element={<Team />} />
         </Route>
 
         {/* Fallback for all other routes */}

@@ -13,6 +13,8 @@ const Clients = () => {
   const [surveys, setSurveys] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
   const [clientSurveys, setClientSurveys] = useState([]);
+  const [teamMembers, setTeamMembers] = useState([]);
+  const [selectedTechnician, setSelectedTechnician] = useState(null);
 
   // Fetch deals and surveys on mount
   useEffect(() => {
@@ -20,19 +22,22 @@ const Clients = () => {
       try {
         const dealsRes = await axios.get('/api/deals');
         const surveysRes = await axios.get('/api/surveys');
+        const teamRes = await axios.get('/api/team');
 
         const sortedDeals = dealsRes.data.deals.sort((a, b) =>
           a.organization_name.localeCompare(b.organization_name)
         );
+        const sortedTeam = teamRes.data.sort((a, b) => a.name.localeCompare(b.name));
 
         setDeals(sortedDeals);
         setSurveys(surveysRes.data);
+        setTeamMembers(sortedTeam);
 
         if (sortedDeals.length > 0) {
           setSelectedClient(sortedDeals[0]);
         }
       } catch (err) {
-        console.error('Error loading clients or surveys:', err);
+        console.error('Error loading clients, surveys, or team members:', err);
       }
     };
 
@@ -43,6 +48,7 @@ const Clients = () => {
   useEffect(() => {
     if (!selectedClient) {
       setClientSurveys([]);
+      setSelectedTechnician(null);
       return;
     }
 
@@ -51,18 +57,41 @@ const Clients = () => {
     );
 
     filtered.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
-
     setClientSurveys(filtered);
+
+    // Set selected technician based on client data (technician can be object or id)
+    if (selectedClient.technician) {
+      const techId = typeof selectedClient.technician === 'object' ? selectedClient.technician._id : selectedClient.technician;
+      setSelectedTechnician(techId);
+    } else {
+      setSelectedTechnician(null);
+    }
   }, [selectedClient, surveys]);
 
-  const latestSurvey = clientSurveys.length > 0 ? clientSurveys[0] : null;
+  // Handle technician assignment change
+  const handleAssignTechnician = async (technicianId) => {
+    if (!selectedClient) return;
+
+    try {
+      const res = await axios.patch(`/api/deals/${selectedClient.deal_id}/assign-technician`, {
+        technicianId,
+      });
+
+      // Update selected client with updated deal info (including populated technician)
+      setSelectedClient(res.data);
+      setSelectedTechnician(technicianId);
+    } catch (err) {
+      console.error('Failed to assign technician:', err);
+      alert('Failed to assign technician. Please try again.');
+    }
+  };
 
   return (
     <div className="flex h-screen">
       {/* Sidebar Section */}
-      <aside className="w-64 bg-gray-100 p-4 overflow-auto">
-        <h2 className="text-xl font-bold mb-4 sticky top-0 bg-gray-100">Clients</h2>
-        <ul>
+      <aside className="w-64 bg-gray-100 p-4 flex flex-col">
+        <h2 className="text-xl font-bold mb-4">Clients</h2>
+        <ul className="overflow-auto flex-grow space-y-1 pr-1">
           {deals.map((deal) => (
             <li
               key={deal.deal_id}
@@ -95,11 +124,11 @@ const Clients = () => {
               <p><strong>Phone:</strong> {selectedClient.phone_number || 'N/A'}</p>
               <p>
                 <strong>Last Survey Date:</strong>{' '}
-                {latestSurvey ? formatDate(latestSurvey.submittedAt) : 'No surveys yet'}
+                {clientSurveys.length > 0 ? formatDate(clientSurveys[0].submittedAt) : 'No surveys yet'}
               </p>
               <p>
                 <strong>Latest Rating:</strong>{' '}
-                {latestSurvey ? latestSurvey.rating : 'N/A'}
+                {clientSurveys.length > 0 ? clientSurveys[0].rating : 'N/A'}
               </p>
               <p>
                 <strong>Time Since Last Survey:</strong>{' '}
@@ -107,6 +136,32 @@ const Clients = () => {
                   ? `${selectedClient.time_since_survey} days`
                   : 'N/A'}
               </p>
+
+              {/* Technician Assignment */}
+              <div className="mt-6">
+                <label className="font-semibold" htmlFor="technician-select">
+                  Assign Technician:
+                </label>
+                <select
+                  id="technician-select"
+                  value={selectedTechnician || ''}
+                  onChange={(e) => handleAssignTechnician(e.target.value)}
+                  className="ml-2 p-1 border rounded"
+                >
+                  <option value="">-- Select Technician --</option>
+                  {teamMembers.map((member) => (
+                    <option key={member._id} value={member._id}>
+                      {member.name}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedTechnician && (
+                  <p className="mt-2 text-gray-700">
+                    Assigned Technician: {teamMembers.find((m) => m._id === selectedTechnician)?.name || 'N/A'}
+                  </p>
+                )}
+              </div>
             </div>
 
             {/* Past Surveys Section */}

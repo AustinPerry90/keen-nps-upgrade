@@ -5,6 +5,7 @@ const axios = require('axios');
 const dealRoutes = require('./routes/dealRoutes');
 const surveyRoute = require('./routes/sendEmail');
 const surveyRoutes = require('./routes/survey');
+const teamRoutes = require('./routes/team');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use('/api', dealRoutes);
 app.use('/api', surveyRoute)
 app.use('/api', surveyRoutes);
+app.use('/api', teamRoutes);
 
 cron.schedule('27 10 * * *', async () => {
   try {
