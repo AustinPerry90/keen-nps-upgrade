@@ -173,5 +173,56 @@ router.patch('/deals/:dealID/assign-technician', async (req, res) => {
   }
 });
 
+// GET Determine upcoming surveys
+router.get('/upcoming-surveys', async (req, res) => {
+  try {
+    const deals = await Deal.find({});
+
+    const today = new Date();
+    const sevenDaysLater = new Date();
+    sevenDaysLater.setDate(today.getDate() + 7);
+
+    const eligibleDeals = deals.filter(deal => {
+      const { time_as_client, stage_id } = deal;
+
+      if (typeof time_as_client !== 'number') return false;
+
+      let intervals = [];
+      if (stage_id === 9) {
+        if (time_as_client < 90) {
+          intervals.push(90);
+        } else {
+          let day = 90;
+          while (day <= time_as_client + 7) {
+            intervals.push(day);
+            day += 180;
+          }
+        }
+      } else if (stage_id === 24) {
+        if (time_as_client < 183) {
+          intervals.push(183);
+        } else {
+          let day = 183;
+          while (day <= time_as_client + 7) {
+            intervals.push(day);
+            day += 365;
+          }
+        }
+      } else {
+        return false;
+      }
+
+      // Determine if any interval falls within the next 7 days
+      return intervals.some(day => day >= time_as_client && day <= time_as_client + 7);
+    });
+
+    res.json({ upcomingSurveys: eligibleDeals });
+  } catch (error) {
+    console.error('Error finding upcoming surveys:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 module.exports = router;
