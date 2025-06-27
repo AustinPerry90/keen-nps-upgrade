@@ -11,10 +11,23 @@ require('dotenv').config();
 
 const app = express();
 
+const allowedOrigin = 'http://localhost:3000';
+
+
 const PORT = process.env.PORT || 5000;
 const MONGO_URI = process.env.MONGODB_URI;
 
-app.use(cors());
+//ensure only api call from the domain are used
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin || origin === allowedOrigin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
 mongoose.connect(MONGO_URI, {
   useNewUrlParser: true,
