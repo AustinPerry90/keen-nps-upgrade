@@ -6,6 +6,7 @@ import Dashboard from './components/dashboard';
 import Home from './pages/home';
 import Clients from './pages/clients';
 import Team from './pages/team';
+import UpcomingSurveys from './pages/surveys';
 
 function App() {
   console.log('App rendered');
@@ -22,6 +23,7 @@ function App() {
           <Route path="home" element={<Home />} />
           <Route path="clients" element={<Clients />} />
           <Route path="team" element={<Team />} />
+          <Route path="surveys" element={<UpcomingSurveys/>} />
         </Route>
 
         {/* Fallback for all other routes */}
