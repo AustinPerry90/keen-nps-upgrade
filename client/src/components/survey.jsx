@@ -80,8 +80,9 @@ const SurveyPage = () => {
           boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
           overflowY: 'auto',
         }}>
+          {/* Replace with whatever image you prefer */}
           <img
-            src="/images/logo192.png"
+            src="/images/logo.png"
             alt="Check-in Graphic"
             style={{ maxWidth: '100%', height: 'auto', marginBottom: '20px' }}
           />
