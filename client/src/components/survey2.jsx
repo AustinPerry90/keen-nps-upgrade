@@ -68,6 +68,12 @@ const SurveyPage = () => {
         overflowY: 'auto',
         maxHeight: '90vh',
       }}>
+        {/* Replace with whatever image you prefer */}
+          <img
+            src="/images/logo.png"
+            alt="Check-in Graphic"
+            style={{ maxWidth: '100%', height: 'auto', marginBottom: '20px' }}
+          />
         <h1 style={{ marginBottom: '10px' }}>Just Checking In</h1>
         <p style={{ fontSize: '1.1em', marginBottom: '30px' }}>
           Let us know how we're doing — your feedback helps us improve!
