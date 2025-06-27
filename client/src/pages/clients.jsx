@@ -8,7 +8,6 @@ function formatDate(dateString) {
 }
 
 const Clients = () => {
-  // State hooks
   const [deals, setDeals] = useState([]);
   const [surveys, setSurveys] = useState([]);
   const [selectedClient, setSelectedClient] = useState(null);
@@ -59,7 +58,7 @@ const Clients = () => {
     filtered.sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
     setClientSurveys(filtered);
 
-    // Set selected technician based on client data (technician can be object or id)
+    // Set selected technician based on client data
     if (selectedClient.technician) {
       const techId = typeof selectedClient.technician === 'object' ? selectedClient.technician._id : selectedClient.technician;
       setSelectedTechnician(techId);
@@ -77,7 +76,7 @@ const Clients = () => {
         technicianId,
       });
 
-      // Update selected client with updated deal info (including populated technician)
+      // Update selected client with updated deal info
       setSelectedClient(res.data);
       setSelectedTechnician(technicianId);
     } catch (err) {
